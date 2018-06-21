@@ -28,7 +28,31 @@ void restoreReg(string str, int index) {
 		regStr[index].push_back(ss);
 	}
 }
- 
+
+// 判别一个字符串是否一个数字
+bool isNumber(string str) {
+	int len = str.size();
+	for (int i = 0; i < len; i++) {
+		if ('0' > str[i] || '9' < str[i]) {
+			return false;
+		}
+	}
+	return true;
+} 
+
+// 数字类型的字符串去掉前面的零
+string strNoZero(string s) {
+	int len = s.size();
+	string ss;
+	for (int i = 0; i < len; i++) {
+		if (s[i] != '0') {
+			ss.append(s, i, len);
+			break;
+		}
+	}
+	return ss;
+} 
+
 // 匹配函数 
 void match(string str) {
 	vector<string> matStr; // 匹配串的信息 
@@ -50,11 +74,16 @@ void match(string str) {
 			matFlag = false;
 			break;
 		}
-		
 		// 对规则串里的每一条规则进行对比
 		for (int j = 0; j < regStr || j < matStr; j++) {
 			if (regStr[i][j] == "<int>") {
-				
+				if (isNumber(matStr[i]) == false) {
+					matFlag = false;
+					break;
+				} else {
+					string number = strNoZero(matStr[i]);
+					matPara.push_back(number);
+				}
 			} else if (regStr[i][j] == "<str>") {
 				
 			} else if (regStr[i][j] == "<path>") {
@@ -63,6 +92,9 @@ void match(string str) {
 				
 			}
 		} 
+		if (matFlag == false) {
+			break;
+		}
 	} 
 }
 
