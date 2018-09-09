@@ -78,43 +78,58 @@ int match(string str) {
 	int result = -1; // 返回的参数, 表明匹配了第几条规则 
 	
 	// 将匹配串的信息录入到matStr里面 
+	replaceSpace(str);
 	stringstream in(str);
 	string ss;
 	while (in >> ss) {
 		matStr.push_back(ss);
 	}
 	
+	// 检查匹配串matStr
+	cout << "检查匹配串matStr" << endl; 
+	for (int i = 0; i < matStr.size(); i++) {
+		cout << matStr[i] << " ";
+	}
+	cout << endl;  
+	
 	// 逐条规则串进行对比
 	for (int i = 0; i < n; i++) {
-		int regSize = regStr[i].size();
-		int matSize = matStr.size();
-		if (regSize != matSize) {
+		if (regStr[i].size() != matStr.size()) {
 			matFlag = false;
 			break;
 		}
 		// 对规则串里的每一条规则进行对比
-		for (int j = 0; j < regSize || j < matSize; j++) {
+		for (int j = 0; j < regStr[i].size() || j < matStr.size(); j++) {
+			// 检查规则串
+			//cout << "检查规则串:" << regStr[i][j] << endl;  
 			if (regStr[i][j] == "<int>") {
 				if (isNumber(matStr[j]) == false) {
 					matFlag = false;
+					cout << "1" << endl;
 					break;
 				} else {
+					cout << "flag = " << matFlag << endl; 
 					string number = strNoZero(matStr[j]);
 					matPara.push_back(number);
+					matFlag = true;
 				}
 			} else if (regStr[i][j] == "<str>") {
 				if (isStr(matStr[j]) == false) {
 					matFlag = false;
+					cout << "2" << endl;
 					break;
 				} else {
 					matPara.push_back(matStr[j]);
+					matFlag = true;
 				}
 			} else if (regStr[i][j] == "<path>") {
-				for (int k = j; k < matSize; k++) {
+				for (int k = j; k < matStr.size(); k++) {
 					if (isStr(matStr[k]) == true) {
 						matPara.push_back(matStr[k]);
+						matFlag = true;
 					} else {
 						matFlag = false;
+						cout << "3" << endl;
 						break;
 					}
 				}
@@ -123,17 +138,24 @@ int match(string str) {
 				}
 			} else {
 				if (regStr[i][j] != matStr[j]) {
+					//cout << regStr[i][j] << " " << matStr[j] << endl;
+					//cout << "4" << endl; 
 					matFlag = false;
+				} else {
+					matFlag = true;
 				}
 			}
 		}
+		/*
 		if (matFlag == true) { // 匹配串符合当前规则串, 则不用再检测了 
 			result = i;
 			break;
 		} else {
 			continue;
 		}
+		*/
 	}
+	cout << "matFlag2=" << matFlag << endl;
 	return result;
 }
 
@@ -176,14 +198,24 @@ int main() {
 	}
 	
 	// 对规则串进行预处理,将/替换为空格
+	cout << "检查规则串" << endl;
 	for (int i = 0; i < n; i++) {
 		replaceSpace(p[i].first);
-		// cout << p[i].first << endl;
+		cout << p[i].first << endl; // 检查规则串 
 	}
 	
 	// 将预处理后的规则串中的规则信息传入regStr中
 	for (int i = 0; i < n; i++) {
 		restoreReg(p[i].first, i);
+	} 
+	
+	// 检查规则串信息regStr
+	cout << "检查规则串信息" << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < regStr[i].size(); j++) {
+			cout << regStr[i][j] << " ";
+		}
+		cout << endl;
 	} 
 	
 	// 对m个字符串开始匹配 
@@ -199,6 +231,8 @@ int main() {
 			divFlag = false;
 		}
 		
+		// 输出答案
+		cout << "输出答案" << endl; 
 		if (result == -1) {
 			cout << 404 << endl;
 		} else {
